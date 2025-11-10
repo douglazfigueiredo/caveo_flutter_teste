@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../application/repositories/product_repository.dart';
 import '../application/use-cases/load_initial_products_command.dart';
 import '../application/use-cases/load_more_products_command.dart';
@@ -7,6 +8,7 @@ import '../infrastructure/api/fake_store_api_client.dart';
 import '../infrastructure/repositories/product_repository_impl.dart';
 import '../presentation/state/product_list_notifier.dart';
 import '../presentation/state/product_list_state.dart';
+import 'router.dart';
 
 /// Provider para a instância do Dio
 final dioProvider = Provider<Dio>((ref) {
@@ -56,3 +58,8 @@ final productListProvider =
     StateNotifierProvider<ProductListNotifier, ProductListState>((ref) {
       return ProductListNotifier(ref);
     });
+
+/// Provider para o GoRouter configurado
+final routerProvider = Provider<GoRouter>((ref) {
+  return router;
+});

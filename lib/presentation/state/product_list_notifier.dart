@@ -1,7 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/providers.dart';
-import '../../application/use-cases/load_initial_products_command.dart';
-import '../../application/use-cases/load_more_products_command.dart';
 import '../../domain/entities/product.dart';
 import '../../shared/utils/result.dart';
 import 'product_list_state.dart';
@@ -10,9 +8,12 @@ import 'product_list_state.dart';
 class ProductListNotifier extends StateNotifier<ProductListState> {
   final Ref ref;
 
+  /// Número de produtos a exibir por página
+  static const int pageSize = 10;
+
   ProductListNotifier(this.ref) : super(const ProductListState());
 
-  /// Carrega os produtos iniciais
+  /// Carrega todos os produtos da API e exibe a primeira página
   Future<void> loadInitialProducts() async {
     // Evita múltiplas requisições simultâneas
     if (state.isLoading) return;
@@ -21,7 +22,7 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     state = state.copyWith(isLoading: true, error: null);
 
     // Obtém o comando do provider
-    final command = ref.read(loadInitialProductsCommandProvider);
+    final command = ref.read(loadAllProductsCommandProvider);
 
     // Executa o comando
     final result = await command.execute();
@@ -29,11 +30,14 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     // Atualiza o estado baseado no resultado
     switch (result) {
       case Success<List<Product>>():
+        final allProducts = result.data;
+        final initialProducts = allProducts.take(pageSize).toList();
+
         state = state.copyWith(
-          displayedProducts: result.data,
+          allProducts: allProducts,
+          displayedProducts: initialProducts,
           isLoading: false,
-          hasMore:
-              result.data.length >= LoadInitialProductsCommand.initialLimit,
+          hasMore: allProducts.length > pageSize,
         );
         break;
 
@@ -43,7 +47,7 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     }
   }
 
-  /// Carrega mais produtos (paginação)
+  /// Carrega mais produtos da memória (paginação no cliente)
   Future<void> loadMoreProducts() async {
     // Evita carregar se já está carregando ou não há mais produtos
     if (state.isLoadingMore || !state.hasMore || state.isLoading) return;
@@ -51,34 +55,29 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     // Define estado de carregamento de paginação
     state = state.copyWith(isLoadingMore: true, error: null);
 
-    // Calcula o offset baseado no número de produtos já carregados
-    final currentOffset = state.displayedProducts.length;
+    // Simula delay de rede para melhor UX
+    await Future.delayed(const Duration(milliseconds: 500));
 
-    // Obtém o comando do provider com o offset atual
-    final command = ref.read(loadMoreProductsCommandProvider(currentOffset));
+    // Calcula quantos produtos já foram exibidos
+    final currentCount = state.displayedProducts.length;
 
-    // Executa o comando
-    final result = await command.execute();
+    // Pega o próximo chunk de produtos da memória
+    final nextProducts = state.allProducts
+        .skip(currentCount)
+        .take(pageSize)
+        .toList();
 
-    // Atualiza o estado baseado no resultado
-    switch (result) {
-      case Success<List<Product>>():
-        final newProducts = result.data;
+    // Adiciona os novos produtos aos já exibidos
+    final newDisplayedProducts = [...state.displayedProducts, ...nextProducts];
 
-        // Se retornou menos produtos que o tamanho da página, não há mais produtos
-        final hasMore = newProducts.length >= LoadMoreProductsCommand.pageSize;
+    // Verifica se ainda há mais produtos para exibir
+    final hasMore = newDisplayedProducts.length < state.allProducts.length;
 
-        state = state.copyWith(
-          displayedProducts: [...state.displayedProducts, ...newProducts],
-          isLoadingMore: false,
-          hasMore: hasMore,
-        );
-        break;
-
-      case Failure<List<Product>>():
-        state = state.copyWith(isLoadingMore: false, error: result.message);
-        break;
-    }
+    state = state.copyWith(
+      displayedProducts: newDisplayedProducts,
+      isLoadingMore: false,
+      hasMore: hasMore,
+    );
   }
 
   /// Reseta o estado para o inicial

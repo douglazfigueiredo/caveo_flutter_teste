@@ -14,14 +14,12 @@ class FakeStoreApiClient {
     );
   }
 
-  Future<List<ProductDto>> getProducts({
-    required int limit,
-    required int offset,
-  }) async {
-    final response = await dio.get(
-      '/products',
-      queryParameters: {'limit': limit, 'offset': offset},
-    );
+  /// Busca todos os produtos da API
+  ///
+  /// A API Fake Store não suporta paginação real. Ela retorna todos os
+  /// produtos disponíveis (~20 produtos) em uma única requisição.
+  Future<List<ProductDto>> getAllProducts() async {
+    final response = await dio.get('/products');
 
     final List<dynamic> data = response.data as List<dynamic>;
     return data

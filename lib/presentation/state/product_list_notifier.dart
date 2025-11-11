@@ -30,7 +30,7 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     switch (result) {
       case Success<List<Product>>():
         state = state.copyWith(
-          products: result.data,
+          displayedProducts: result.data,
           isLoading: false,
           hasMore:
               result.data.length >= LoadInitialProductsCommand.initialLimit,
@@ -52,7 +52,7 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
     state = state.copyWith(isLoadingMore: true, error: null);
 
     // Calcula o offset baseado no número de produtos já carregados
-    final currentOffset = state.products.length;
+    final currentOffset = state.displayedProducts.length;
 
     // Obtém o comando do provider com o offset atual
     final command = ref.read(loadMoreProductsCommandProvider(currentOffset));
@@ -69,7 +69,7 @@ class ProductListNotifier extends StateNotifier<ProductListState> {
         final hasMore = newProducts.length >= LoadMoreProductsCommand.pageSize;
 
         state = state.copyWith(
-          products: [...state.products, ...newProducts],
+          displayedProducts: [...state.displayedProducts, ...newProducts],
           isLoadingMore: false,
           hasMore: hasMore,
         );

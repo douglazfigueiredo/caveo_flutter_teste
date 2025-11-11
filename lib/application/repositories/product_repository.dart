@@ -3,14 +3,11 @@ import '../../shared/utils/result.dart';
 
 /// Interface de repositório para operações com produtos
 abstract class ProductRepository {
-  /// Busca produtos da API com paginação
+  /// Busca todos os produtos da API
   ///
-  /// [limit] - Número máximo de produtos a retornar
-  /// [offset] - Número de produtos a pular (para paginação)
+  /// A API Fake Store não suporta paginação, retornando todos os produtos
+  /// disponíveis em uma única requisição.
   ///
-  /// Retorna um Result contendo a lista de produtos ou uma falha
-  Future<Result<List<Product>>> getProducts({
-    required int limit,
-    required int offset,
-  });
+  /// Retorna um Result contendo a lista de todos os produtos ou uma falha
+  Future<Result<List<Product>>> getAllProducts();
 }

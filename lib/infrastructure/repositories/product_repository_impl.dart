@@ -10,12 +10,9 @@ class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl(this.apiClient);
 
   @override
-  Future<Result<List<Product>>> getProducts({
-    required int limit,
-    required int offset,
-  }) async {
+  Future<Result<List<Product>>> getAllProducts() async {
     try {
-      final dtos = await apiClient.getProducts(limit: limit, offset: offset);
+      final dtos = await apiClient.getAllProducts();
       final products = dtos.map((dto) => dto.toDomain()).toList();
       return Success(products);
     } on DioException catch (e) {

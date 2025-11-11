@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/product.dart';
+import '../../shared/utils/currency_formatter.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -27,8 +28,22 @@ class ProductCard extends StatelessWidget {
           errorWidget: (context, url, error) => Container(
             width: 80,
             height: 80,
-            color: Colors.grey[200],
-            child: const Icon(Icons.error_outline, color: Colors.grey),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.broken_image, color: Colors.grey[400], size: 32),
+                const SizedBox(height: 4),
+                Text(
+                  'Imagem\nindisponível',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                ),
+              ],
+            ),
           ),
         ),
         title: Text(
@@ -42,7 +57,7 @@ class ProductCard extends StatelessWidget {
           children: [
             const SizedBox(height: 8),
             Text(
-              'R\$ ${product.price.toStringAsFixed(2).replaceAll('.', ',')}',
+              CurrencyFormatter.format(product.price),
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,

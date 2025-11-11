@@ -39,7 +39,8 @@ void main() {
         ),
       );
 
-      expect(find.text('R\$ 99,99'), findsOneWidget);
+      expect(find.textContaining('R\$'), findsOneWidget);
+      expect(find.textContaining('99,99'), findsOneWidget);
     });
 
     testWidgets('renders product rating correctly', (

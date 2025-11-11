@@ -1,5 +1,5 @@
 import 'package:caveo_flutter_teste/application/repositories/product_repository.dart';
-import 'package:caveo_flutter_teste/application/use-cases/load_initial_products_command.dart';
+import 'package:caveo_flutter_teste/application/use-cases/load_all_products_command.dart';
 import 'package:caveo_flutter_teste/domain/entities/product.dart';
 import 'package:caveo_flutter_teste/domain/entities/rating.dart';
 import 'package:caveo_flutter_teste/shared/utils/result.dart';
@@ -7,23 +7,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'load_initial_products_command_test.mocks.dart';
+import 'load_all_products_command_test.mocks.dart';
 
 @GenerateMocks([ProductRepository])
 void main() {
-  late LoadInitialProductsCommand command;
+  late LoadAllProductsCommand command;
   late MockProductRepository mockRepository;
 
   setUp(() {
     mockRepository = MockProductRepository();
-    command = LoadInitialProductsCommand(mockRepository);
+    command = LoadAllProductsCommand(mockRepository);
   });
 
   setUpAll(() {
     provideDummy<Result<List<Product>>>(const Success([]));
   });
 
-  group('LoadInitialProductsCommand', () {
+  group('LoadAllProductsCommand', () {
     test(
       'deve retornar Success com lista de produtos quando repository retorna sucesso',
       () async {
@@ -41,10 +41,7 @@ void main() {
         ];
 
         when(
-          mockRepository.getProducts(
-            limit: LoadInitialProductsCommand.initialLimit,
-            offset: 0,
-          ),
+          mockRepository.getAllProducts(),
         ).thenAnswer((_) async => Success(products));
 
         // Act
@@ -55,12 +52,7 @@ void main() {
         final success = result as Success<List<Product>>;
         expect(success.data.length, 1);
         expect(success.data.first.id, 1);
-        verify(
-          mockRepository.getProducts(
-            limit: LoadInitialProductsCommand.initialLimit,
-            offset: 0,
-          ),
-        ).called(1);
+        verify(mockRepository.getAllProducts()).called(1);
       },
     );
 
@@ -68,10 +60,7 @@ void main() {
       // Arrange
       const errorMessage = 'Erro ao carregar produtos';
       when(
-        mockRepository.getProducts(
-          limit: LoadInitialProductsCommand.initialLimit,
-          offset: 0,
-        ),
+        mockRepository.getAllProducts(),
       ).thenAnswer((_) async => const Failure(errorMessage));
 
       // Act
@@ -83,20 +72,17 @@ void main() {
       expect(failure.message, errorMessage);
     });
 
-    test('deve usar limit de 20 produtos', () async {
+    test('deve buscar todos os produtos sem parâmetros de paginação', () async {
       // Arrange
       when(
-        mockRepository.getProducts(
-          limit: LoadInitialProductsCommand.initialLimit,
-          offset: 0,
-        ),
+        mockRepository.getAllProducts(),
       ).thenAnswer((_) async => const Success([]));
 
       // Act
       await command.execute();
 
       // Assert
-      verify(mockRepository.getProducts(limit: 20, offset: 0)).called(1);
+      verify(mockRepository.getAllProducts()).called(1);
     });
   });
 }

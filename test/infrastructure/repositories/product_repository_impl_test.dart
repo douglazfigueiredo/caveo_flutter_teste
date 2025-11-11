@@ -39,11 +39,11 @@ void main() {
         ];
 
         when(
-          mockApiClient.getProducts(limit: 20, offset: 0),
+          mockApiClient.getAllProducts(),
         ).thenAnswer((_) async => productDtos);
 
         // Act
-        final result = await repository.getProducts(limit: 20, offset: 0);
+        final result = await repository.getAllProducts();
 
         // Assert
         expect(result, isA<Success<List<Product>>>());
@@ -51,13 +51,13 @@ void main() {
         expect(success.data.length, 1);
         expect(success.data.first.id, 1);
         expect(success.data.first.title, 'Test Product');
-        verify(mockApiClient.getProducts(limit: 20, offset: 0)).called(1);
+        verify(mockApiClient.getAllProducts()).called(1);
       },
     );
 
     test('deve retornar Failure quando ocorre timeout', () async {
       // Arrange
-      when(mockApiClient.getProducts(limit: 20, offset: 0)).thenThrow(
+      when(mockApiClient.getAllProducts()).thenThrow(
         DioException(
           requestOptions: RequestOptions(path: '/products'),
           type: DioExceptionType.connectionTimeout,
@@ -65,7 +65,7 @@ void main() {
       );
 
       // Act
-      final result = await repository.getProducts(limit: 20, offset: 0);
+      final result = await repository.getAllProducts();
 
       // Assert
       expect(result, isA<Failure<List<Product>>>());
@@ -75,7 +75,7 @@ void main() {
 
     test('deve retornar Failure quando não há conexão', () async {
       // Arrange
-      when(mockApiClient.getProducts(limit: 20, offset: 0)).thenThrow(
+      when(mockApiClient.getAllProducts()).thenThrow(
         DioException(
           requestOptions: RequestOptions(path: '/products'),
           type: DioExceptionType.connectionError,
@@ -83,7 +83,7 @@ void main() {
       );
 
       // Act
-      final result = await repository.getProducts(limit: 20, offset: 0);
+      final result = await repository.getAllProducts();
 
       // Assert
       expect(result, isA<Failure<List<Product>>>());
@@ -96,7 +96,7 @@ void main() {
 
     test('deve retornar Failure quando servidor retorna erro 500', () async {
       // Arrange
-      when(mockApiClient.getProducts(limit: 20, offset: 0)).thenThrow(
+      when(mockApiClient.getAllProducts()).thenThrow(
         DioException(
           requestOptions: RequestOptions(path: '/products'),
           type: DioExceptionType.badResponse,
@@ -108,7 +108,7 @@ void main() {
       );
 
       // Act
-      final result = await repository.getProducts(limit: 20, offset: 0);
+      final result = await repository.getAllProducts();
 
       // Assert
       expect(result, isA<Failure<List<Product>>>());
@@ -119,11 +119,11 @@ void main() {
     test('deve retornar Failure quando ocorre erro inesperado', () async {
       // Arrange
       when(
-        mockApiClient.getProducts(limit: 20, offset: 0),
+        mockApiClient.getAllProducts(),
       ).thenThrow(Exception('Unexpected error'));
 
       // Act
-      final result = await repository.getProducts(limit: 20, offset: 0);
+      final result = await repository.getAllProducts();
 
       // Assert
       expect(result, isA<Failure<List<Product>>>());

@@ -62,7 +62,7 @@ void main() {
       testWidgets('renderiza AppBar com título correto', (
         WidgetTester tester,
       ) async {
-        final state = ProductListState(products: testProducts);
+        final state = ProductListState(displayedProducts: testProducts);
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -73,7 +73,7 @@ void main() {
       testWidgets('renderiza lista de produtos corretamente', (
         WidgetTester tester,
       ) async {
-        final state = ProductListState(products: testProducts);
+        final state = ProductListState(displayedProducts: testProducts);
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -86,7 +86,7 @@ void main() {
       testWidgets('renderiza empty state quando não há produtos', (
         WidgetTester tester,
       ) async {
-        const state = ProductListState(products: []);
+        const state = ProductListState(displayedProducts: []);
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -97,7 +97,7 @@ void main() {
       testWidgets('usa ListView.builder para renderização', (
         WidgetTester tester,
       ) async {
-        final state = ProductListState(products: testProducts);
+        final state = ProductListState(displayedProducts: testProducts);
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -121,7 +121,7 @@ void main() {
         'mostra loading indicator no final da lista quando isLoadingMore é true',
         (WidgetTester tester) async {
           final state = ProductListState(
-            products: testProducts,
+            displayedProducts: testProducts,
             isLoadingMore: true,
           );
 
@@ -142,7 +142,7 @@ void main() {
       testWidgets('não mostra loading extra quando isLoadingMore é false', (
         WidgetTester tester,
       ) async {
-        final state = ProductListState(products: testProducts);
+        final state = ProductListState(displayedProducts: testProducts);
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -159,7 +159,7 @@ void main() {
         WidgetTester tester,
       ) async {
         const state = ProductListState(
-          products: [],
+          displayedProducts: [],
           error: 'Erro ao carregar produtos',
         );
 
@@ -174,7 +174,7 @@ void main() {
         WidgetTester tester,
       ) async {
         final state = ProductListState(
-          products: testProducts,
+          displayedProducts: testProducts,
           error: 'Erro ao carregar mais produtos',
         );
 
@@ -190,7 +190,7 @@ void main() {
         WidgetTester tester,
       ) async {
         final state = ProductListState(
-          products: testProducts,
+          displayedProducts: testProducts,
           error: 'Erro ao carregar mais produtos',
         );
 
@@ -222,7 +222,10 @@ void main() {
           ),
         );
 
-        final state = ProductListState(products: manyProducts, hasMore: true);
+        final state = ProductListState(
+          displayedProducts: manyProducts,
+          hasMore: true,
+        );
 
         await tester.pumpWidget(createTestWidget(state));
 
@@ -235,7 +238,7 @@ void main() {
         WidgetTester tester,
       ) async {
         final state = ProductListState(
-          products: testProducts,
+          displayedProducts: testProducts,
           isLoadingMore: true,
           hasMore: true,
         );

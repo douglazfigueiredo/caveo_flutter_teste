@@ -49,15 +49,9 @@ class MockFakeStoreApiClient extends _i1.Mock
           as _i2.Dio);
 
   @override
-  _i4.Future<List<_i5.ProductDto>> getProducts({
-    required int? limit,
-    required int? offset,
-  }) =>
+  _i4.Future<List<_i5.ProductDto>> getAllProducts() =>
       (super.noSuchMethod(
-            Invocation.method(#getProducts, [], {
-              #limit: limit,
-              #offset: offset,
-            }),
+            Invocation.method(#getAllProducts, []),
             returnValue: _i4.Future<List<_i5.ProductDto>>.value(
               <_i5.ProductDto>[],
             ),

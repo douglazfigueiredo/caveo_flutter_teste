@@ -48,7 +48,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
 
     // Mostra snackbar para erros durante paginação
     if (state.error != null &&
-        state.products.isNotEmpty &&
+        state.displayedProducts.isNotEmpty &&
         state.error != _previousError) {
       _previousError = state.error;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -87,7 +87,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
     }
 
     // Se houve erro e não há produtos, mostra erro
-    if (state.error != null && state.products.isEmpty) {
+    if (state.error != null && state.displayedProducts.isEmpty) {
       return ErrorView(
         message: state.error!,
         onRetry: () {
@@ -97,7 +97,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
     }
 
     // Se não há produtos, mostra empty state
-    if (state.products.isEmpty) {
+    if (state.displayedProducts.isEmpty) {
       return const Center(
         child: Text(
           'Nenhum produto disponível',
@@ -109,10 +109,10 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
     // Mostra a lista de produtos
     return ListView.builder(
       controller: _scrollController,
-      itemCount: state.products.length + (state.isLoadingMore ? 1 : 0),
+      itemCount: state.displayedProducts.length + (state.isLoadingMore ? 1 : 0),
       itemBuilder: (context, index) {
         // Se é o último item e está carregando mais, mostra loading indicator
-        if (index >= state.products.length) {
+        if (index >= state.displayedProducts.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(child: CircularProgressIndicator()),
@@ -120,7 +120,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
         }
 
         // Renderiza o card do produto
-        return ProductCard(product: state.products[index]);
+        return ProductCard(product: state.displayedProducts[index]);
       },
     );
   }

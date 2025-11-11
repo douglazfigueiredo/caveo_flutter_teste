@@ -14,7 +14,10 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
-    _loadInitialProducts();
+    // Agenda a execução após o primeiro frame para evitar problemas com Riverpod
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadInitialProducts();
+    });
   }
 
   Future<void> _loadInitialProducts() async {
@@ -28,7 +31,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final state = ref.read(productListProvider);
 
     // Se carregou com sucesso, navega para a tela de produtos
-    if (state.error == null && state.products.isNotEmpty) {
+    if (state.error == null && state.displayedProducts.isNotEmpty) {
       context.go('/products');
     }
   }

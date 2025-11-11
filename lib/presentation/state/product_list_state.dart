@@ -2,8 +2,11 @@ import '../../domain/entities/product.dart';
 
 /// Estado da lista de produtos
 class ProductListState {
-  /// Lista de produtos carregados
-  final List<Product> products;
+  /// Todos os produtos carregados da API (cache em memória)
+  final List<Product> allProducts;
+
+  /// Lista de produtos exibidos atualmente (paginação no cliente)
+  final List<Product> displayedProducts;
 
   /// Indica se está carregando os produtos iniciais
   final bool isLoading;
@@ -18,7 +21,8 @@ class ProductListState {
   final bool hasMore;
 
   const ProductListState({
-    this.products = const [],
+    this.allProducts = const [],
+    this.displayedProducts = const [],
     this.isLoading = false,
     this.isLoadingMore = false,
     this.error,
@@ -27,14 +31,16 @@ class ProductListState {
 
   /// Cria uma cópia do estado com os campos especificados atualizados
   ProductListState copyWith({
-    List<Product>? products,
+    List<Product>? allProducts,
+    List<Product>? displayedProducts,
     bool? isLoading,
     bool? isLoadingMore,
     String? error,
     bool? hasMore,
   }) {
     return ProductListState(
-      products: products ?? this.products,
+      allProducts: allProducts ?? this.allProducts,
+      displayedProducts: displayedProducts ?? this.displayedProducts,
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       error: error,
